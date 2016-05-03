@@ -1,0 +1,70 @@
+Mysql常用命令
+命令是个人用过后笔记，仅供参考。
+1.登陆mysql
+
+mysql -u root -p password
+
+2.远程访问开启(（%）表示任何主机连接，可以换固定IP来访问远程连接,远程访问主要修改root@'localhost'修改为%任何地址)
+
+GRANT ALL ON *.* TO root@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
+
+3.在ssh客户端命令访问另一台mysql
+
+mysql -h *.*.*.* -u root –p 'password'
+
+4.创建test数据库
+
+create database test default character set utf8 collate utf8_general_ci;
+
+5.数据库授权
+
+grant all on test.* to test@'%' identified by "password";
+
+6.刷新
+
+flush privileges;
+
+7.锁表
+
+flush tables with read lock;
+
+8.解表
+
+unlock tables;
+
+9.导入数据
+
+use test;
+source test.sql;
+10.导出完整的数据库备份文件
+
+mysqldump -h 127.0.0.1 -P 3306 -u root -p 'password' --add-locks -q test --default-character-set=utf8 > test.sql
+
+11.导出表结构(说明：-d：只导出表结构，不含数据)
+
+mysqldump -h 127.0.0.1 -P 3306 -uroot -p 'password' --add-locks -q -d test --default-character-set=utf8 > test.sql
+
+12.导出完整的数据库的数据不含表结构
+
+mysqldump -h 127.0.0.1 -P 3306 -u root -p 'password' --add-locks -q -t test --default-character-set=utf8 > test.sql
+
+13.导出指定表结构和数据及压缩gzip
+
+mysqldump -h 127.0.0.1 -P 3306 -u root -p --add-locks -q --database test_db --tables test_tables --default-character-set=utf8 | gzip > test.gz
+
+14.mysql查看系统变量及其值
+
+SHOW VARIABLES;
+
+15.mysql锁表查看
+
+show open tables where In_use > 0;
+
+(where过滤, 只输出表上线程数大于0的表) Database和Table就不做说明了; In_use显示出有多少线程正在使用此表，有可能已经给这个表上锁，或者等待获得锁，然后给这个表上锁; Name_locked显示表名称是否被锁定，0往往是没有锁定，1为写锁, 写锁基本发生在rename table时。
+16.mysql 锁定ip 刷新主机
+
+mysqladmin -uroot -p flush-hosts
+
+17.删除用户
+
+DROP USER 'username'@'host';
